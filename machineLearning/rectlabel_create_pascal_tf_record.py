@@ -124,6 +124,7 @@ def main(_):
     annotations_dir = os.path.join(images_dir, FLAGS.annotations_dir)
     print(annotations_dir)
     label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
+    print(label_map_dict)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
     for idx, image_file in enumerate(image_files):
         print(idx, image_file)
