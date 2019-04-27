@@ -127,14 +127,15 @@ def main(_):
     print(label_map_dict)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
     for idx, image_file in enumerate(image_files):
-        print(idx, image_file)
+        print(idx, images_dir, image_file)
+        fullPathToImageFile = os.path.join(images_dir, image_file)
         image_file_split = image_file.split('/')
         annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file_split[-1])[0] + '.xml')
         with tf.gfile.GFile(annotation_path, 'r') as fid:
             xml_str = fid.read()
         xml = etree.fromstring(xml_str)
         data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
-        tf_example = dict_to_tf_example(data, image_file, annotations_dir, label_map_dict, FLAGS.include_masks, FLAGS.ignore_difficult_instances)
+        tf_example = dict_to_tf_example(data, fullPathToImageFile, annotations_dir, label_map_dict, FLAGS.include_masks, FLAGS.ignore_difficult_instances)
         writer.write(tf_example.SerializeToString())
     writer.close()
 
