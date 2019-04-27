@@ -120,6 +120,7 @@ def main(_):
     print(images_dir)
     image_files = dataset_util.read_examples_list(FLAGS.image_list_path)
     print(image_files)
+    print(len(image_files))
     annotations_dir = os.path.join(images_dir, FLAGS.annotations_dir)
     print(annotations_dir)
     label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
