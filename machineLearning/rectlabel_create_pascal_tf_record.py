@@ -135,7 +135,7 @@ def main(_):
             xml_str = fid.read()
         xml = etree.fromstring(xml_str)
         data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
-        tf_example = dict_to_tf_example(data, fullPathToImageFile, annotations_dir, label_map_dict, FLAGS.include_masks, FLAGS.ignore_difficult_instances)
+        tf_example = dict_to_tf_example(data, fullPathToImageFile + ".jpg", annotations_dir, label_map_dict, FLAGS.include_masks, FLAGS.ignore_difficult_instances)
         writer.write(tf_example.SerializeToString())
     writer.close()
 
