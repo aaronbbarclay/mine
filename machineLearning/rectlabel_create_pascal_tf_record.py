@@ -130,7 +130,7 @@ def main(_):
         #print(idx, images_dir, image_file)
         fullPathToImageFile = "{}.jpg".format(os.path.join(images_dir, image_file))
         print(fullPathToImageFile)
-        print(os.path.isfile(fullPathToImageFile)
+        print(os.path.isfile(fullPathToImageFile))
         image_file_split = image_file.split('/')
         annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file_split[-1])[0] + '.xml')
         with tf.gfile.GFile(annotation_path, 'r') as fid:
