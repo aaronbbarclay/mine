@@ -117,18 +117,19 @@ def dict_to_tf_example(data, image_file, annotations_dir, label_map_dict, includ
 
 def main(_):
     images_dir = FLAGS.images_dir
-    print(images_dir)
+    print("Images Dir: {}".format(images_dir))
     image_files = dataset_util.read_examples_list(FLAGS.image_list_path)
-    print(image_files)
-    print(len(image_files))
+    #print(image_files)
+    #print(len(image_files))
     annotations_dir = os.path.join(images_dir, FLAGS.annotations_dir)
     print(annotations_dir)
     label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)
     print(label_map_dict)
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
     for idx, image_file in enumerate(image_files):
-        print(idx, images_dir, image_file)
+        #print(idx, images_dir, image_file)
         fullPathToImageFile = os.path.join(images_dir, image_file)
+        print(fullPathToImageFile)
         image_file_split = image_file.split('/')
         annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file_split[-1])[0] + '.xml')
         with tf.gfile.GFile(annotation_path, 'r') as fid:
