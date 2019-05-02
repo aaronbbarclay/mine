@@ -133,6 +133,7 @@ def main(_):
         print(os.path.isfile(fullPathToImageFile))
         image_file_split = image_file.split('/')
         annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file_split[-1])[0] + '.xml')
+        print(annotations_path)
         with tf.gfile.GFile(annotation_path, 'r') as fid:
             xml_str = fid.read()
         xml = etree.fromstring(xml_str)
