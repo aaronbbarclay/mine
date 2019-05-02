@@ -129,12 +129,14 @@ def main(_):
     for idx, image_file in enumerate(image_files):
         #print(idx, images_dir, image_file)
         fullPathToImageFile = "{}.jpg".format(os.path.join(images_dir, image_file))
-        print(fullPathToImageFile)
-        print(os.path.isfile(fullPathToImageFile))
+        #print(fullPathToImageFile)
+        #print(os.path.isfile(fullPathToImageFile))
         image_file_split = image_file.split('/')
         annotation_path = os.path.join(annotations_dir, os.path.splitext(image_file_split[-1])[0] + '.xml')
-        print(os.path.isfile(annotation_path))
-        print(annotation_path)
+        if not os.path.isfile(annotation_path) or not os.path.isfile(fullPathToImageFile):
+            continue
+            
+        #print(annotation_path)
         with tf.gfile.GFile(annotation_path, 'r') as fid:
             xml_str = fid.read()
         xml = etree.fromstring(xml_str)
