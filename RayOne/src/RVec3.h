@@ -2,6 +2,9 @@
 // Created by Aaron Barclay on 31/8/19.
 //
 
+#ifndef RVEC3
+#define RVEC3
+
 #include <cmath>
 #include <stdlib.h>
 #include <iostream>
@@ -146,4 +149,4 @@ inline vec3 unit_vector(vec3 v) {
     return v / v.length();
 };
 
-
+#endif
