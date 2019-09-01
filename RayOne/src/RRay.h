@@ -5,7 +5,7 @@
 #ifndef RAYONE_RRAY_H
 #define RAYONE_RRAY_H
 
-#include "RVec3.h"
+#include "vec3.h"
 
 class rray
 {
