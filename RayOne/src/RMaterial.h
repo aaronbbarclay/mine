@@ -7,6 +7,7 @@
 
 #include "RRay.h"
 #include "RVec3.h"
+#include "RTexture.h"
 #include "random.h"
 
 vec3 random_in_unit_sphere() {
@@ -47,14 +48,15 @@ public:
 
 class lambertian : public material {
 public:
-    lambertian(const vec3& a) : albedo(a) {}
+//    lambertian(const vec3& a) : albedo(a) {}
+    lambertian(texture *a) : albedo(a) {}
     virtual bool scatter(const rray& r_in, const hit_record& rec, vec3& attenutation, rray& scattered) const {
         vec3 target = rec.p + rec.normal + random_in_unit_sphere();
         scattered = rray(rec.p, target-rec.p);
-        attenutation = albedo;
+        attenutation = albedo->value(0, 0, rec.p);
         return true;
     }
-    vec3 albedo;
+    texture *albedo;
 };
 
 

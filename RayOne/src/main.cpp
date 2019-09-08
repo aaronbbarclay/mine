@@ -156,7 +156,7 @@ void setup3() {
     cv::imwrite("./_setup3.jpg", myImage);
 }
 */
-
+/*
 void setup4() {
 
     int nx = 1000;
@@ -210,11 +210,13 @@ void setup4() {
     }
     cv::imwrite("./_setup8.jpg", myImage);
 }
+*/
 
 hitable *random_scene() {
     int n = 500;
     hitable **list = new hitable*[n+1];
-    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(vec3(0.5, 0.5, 0.5)));
+    texture *checker = new checker_texture(new constant_texture(vec3(0.2, 0.3, 0.1)), new constant_texture(vec3(0.9, 0.9, 0.9)));
+    list[0] =  new sphere(vec3(0,-1000,0), 1000, new lambertian(new constant_texture(vec3(0.5, 0.5, 0.5))));
     int i = 1;
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -224,10 +226,9 @@ hitable *random_scene() {
                 if (choose_mat < 0.8) {  // diffuse
                     list[i++] = new sphere(
                             center, 0.2,
-                            new lambertian(vec3(random_double()*random_double(),
+                            new lambertian(new constant_texture(vec3(random_double()*random_double(),
                                                 random_double()*random_double(),
-                                                random_double()*random_double()))
-                    );
+                                                random_double()*random_double()))));
                 }
                 else if (choose_mat < 0.95) { // metal
                     list[i++] = new sphere(
@@ -235,8 +236,7 @@ hitable *random_scene() {
                             new metal(vec3(0.5*(1 + random_double()),
                                            0.5*(1 + random_double()),
                                            0.5*(1 + random_double())),
-                                      0.5*random_double())
-                    );
+                                      0.5*random_double()));
                 }
                 else {  // glass
                     list[i++] = new sphere(center, 0.2, new dielectric(1.5));
@@ -246,7 +246,7 @@ hitable *random_scene() {
     }
 
     list[i++] = new sphere(vec3(0, 1, 0), 1.0, new dielectric(1.5));
-    list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(vec3(0.4, 0.2, 0.1)));
+    list[i++] = new sphere(vec3(-4, 1, 0), 1.0, new lambertian(new constant_texture(vec3(0.4, 0.2, 0.1))));
     list[i++] = new sphere(vec3(4, 1, 0), 1.0, new metal(vec3(0.7, 0.6, 0.5), 0.0));
 
     return new hitable_list(list,i);
@@ -254,9 +254,9 @@ hitable *random_scene() {
 
 void setup5() {
 
-    int nx = 1200;
-    int ny = 800;
-    int ns = 100;
+    int nx = 1200/2;
+    int ny = 800/2;
+    int ns = 10;
 
     float R = cos(M_PI/4);
 //    hitable *list[2];
@@ -283,7 +283,7 @@ void setup5() {
     list[4] = new sphere(vec3(-1, 0, -1), 0.45, new dielectric(1.5));
     hitable *world = new hitable_list(list, 5);
 */
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), 90, float(nx)/float(ny), aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vec3(0, 1, 0), 50, float(nx)/float(ny), aperture, dist_to_focus);
 
     cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
 
@@ -313,13 +313,58 @@ void setup5() {
             _Image(j, i)[2] = ir;
         }
     }
-    cv::imwrite("./_setup11.jpg", myImage);
+    cv::imwrite("./_setup13.jpg", myImage);
+}
+
+void setup6() {
+
+    int nx = 1200/2;
+    int ny = 800/2;
+    int ns = 10;
+
+    float R = cos(M_PI/4);
+    hitable *world = random_scene();
+
+    vec3 lookfrom(-2, 2, 1);
+    vec3 lookat(0, 0, -1);
+    float dist_to_focus = 10.0;
+    float aperture = 0.1;
+
+    camera cam(lookfrom, lookat, vec3(0, 1, 0), 80, float(nx)/float(ny), aperture, dist_to_focus);
+
+    cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
+
+    cv::Mat_<cv::Vec3b> _Image;
+    _Image = myImage;
+
+    for (int j = ny - 1; j >= 0; j--) {
+        for (int i = 0; i < nx; i++) {
+            vec3 col(0, 0, 0);
+            for (int s=0; s < ns; s++) {
+                float u = float(i + random_double()) / float(nx);
+                float v = float(j + random_double()) / float(ny);
+                rray r = cam.get_ray(u, v);
+                col += color(r, world, 0);
+            }
+
+            col /= float(ns);
+            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
+
+            int ir = int(255.99 * col[0]);
+            int ig = int(255.99 * col[1]);
+            int ib = int(255.99 * col[2]);
+
+            _Image(j, i)[0] = ib;
+            _Image(j, i)[1] = ig;
+            _Image(j, i)[2] = ir;
+        }
+    }
+    cv::imwrite("./_setup14.jpg", myImage);
 }
 
 int main() {
     std::cout << "Raymondo 0.0.1" << std::endl;
-//    setup1();
-    setup5();
+    setup6();
 
     return 0;
 }
