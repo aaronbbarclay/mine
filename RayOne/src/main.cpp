@@ -10,29 +10,9 @@
 #include "RSphere.h"
 #include "hitable_list.h"
 #include "RCamera.h"
-#include "cfloat"
 #include "random.h"
 #include "RMaterial.h"
 
-
-//#include "vec3.h"
-
-float hit_sphere(const vec3& center, float radius, const rray& r) {
-    vec3 oc = r.origin() - center;
-    float a = dot(r.direction(), r.direction());
-    float b = 2.0 * dot(oc, r.direction());
-    float c = dot(oc, oc) - radius*radius;
-    float discriminant = b*b - 4*a*c;
-
-//    return (discriminant > 0);
-    if (discriminant < 0) {
-        std::cout << discriminant << std::endl ;
-        return -1.0;
-    } else {
-        return (-b - sqrt(discriminant) ) / (2.0*a);
-    }
-
-}
 
 vec3 color(const rray& r, hitable *world, int depth) {
     hit_record rec;
@@ -60,157 +40,13 @@ vec3 color(const rray& r, hitable *world) {
 
     if (world->hit(r, 0.001, MAXFLOAT, rec)) {
         vec3 target = rec.p + rec.normal + random_in_unit_sphere();
-//        rray scattered;
-//        vec3 attenuation;
-
-//        if (depth < 50 && rec.mat_ptr)
-        return 0.5 * color(rray(rec.p, target-rec.p), world); //vec3(rec.normal.x() + 1, rec.normal.y() + 1, rec.normal.z() + 1);
+        return 0.5 * color(rray(rec.p, target-rec.p), world); //vec3(rec
     } else {
         vec3 unit_direction = unit_vector(r.direction());
         float t = 0.5 * (unit_direction.y() + 1.0);
         return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
     }
 }
-
-void writeTestImage() {
-    int width = 1000;  // cols
-    int height = 500;  // rows
-
-    cv::Mat myImage(height, width, CV_8UC3, cv::Scalar(.1, .1, .3));
-
-    cv::Mat_<cv::Vec3b> _Image;
-    _Image = myImage;
-    for( int xx = 0; xx < width; xx++) {
-        for (int yy = 0; yy < height; yy++) {
-            int yY;
-            yY = height-yy;
-
-            _Image(yY, xx)[0] = int(255.99 * 0.2);
-            _Image(yY, xx)[1] = int(255.99 * (float(yy) / float(height)));
-            _Image(yY, xx)[2] = int(255.99 * (float(xx) / float(width)));
-        }
-    }
-    cv::imwrite("./test2.jpg", myImage);
-}
-
-/*
-void setup3() {
-    std::cout << "Raymondo 0.0.1" << std::endl;
-
-    vec3 lower_left_corner(-2.0, -1.0, -1.0);
-    vec3 horizontal(4.0, 0.0, 0.0);
-    vec3 vertical(0.0, 2.0, 0.0);
-    vec3 origin(0.0, 0.0, 0.0);
-
-    hitable *list[2];
-    list[0] = new sphere(vec3(0,0,-1), 0.5);
-    list[1] = new sphere(vec3(0, -100.5, -1), 100);
-    hitable *world = new hitable_list(list, 2);
-
-    camera cam;
-
-    int nx = 1000;
-    int ny = 500;
-    int ns = 10;
-
-    cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
-
-    cv::Mat_<cv::Vec3b> _Image;
-    _Image = myImage;
-
-//    std::random_device r;
-    long int random(void);
-
-
-    for (int j = ny - 1; j >= 0; j--) {
-        for (int i = 0; i < nx; i++) {
-
-
-//            vec3 col(0, 0, 0);
-//
-//            for (int s=0; s < ns; s++) {
-//                float u = float(i) / float(nx);
-//                float v = float(j) / float(ny);
-//                float u = float(i + random_double()) / float(nx);
-//                float v = float(j + random_double()) / float(ny);
-//                rray r = cam.get_ray(u, v);
-//                col += color(r, world, 0);
-//
-//            }
-
-            float u = float(i) / float(nx);
-            float v = float(j) / float(ny);
-            rray r(origin, lower_left_corner + u * horizontal + v * vertical);
-            vec3 p = r.point_at_parameter(2.0);
-            vec3 col = color(r, world);
-
-            int ir = int(255.99 * col[0]);
-            int ig = int(255.99 * col[1]);
-            int ib = int(255.99 * col[2]);
-
-            _Image(j, i)[0] = ib;
-            _Image(j, i)[1] = ig;
-            _Image(j, i)[2] = ir;
-        }
-    }
-    cv::imwrite("./_setup3.jpg", myImage);
-}
-*/
-/*
-void setup4() {
-
-    int nx = 1000;
-    int ny = 500;
-    int ns = 50;
-
-//    float R = cos(M_PI/4);
-    hitable *list[5];
-
-    vec3 lookfrom(13, 2, 3);
-    vec3 lookat(0,0,0);
-    float dist_to_focus = 10;
-    float aperture = 0.1;
-
-    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
-    list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-    list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0));
-    list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
-    list[4] = new sphere(vec3(-1, 0, -1), 0.45, new dielectric(1.5));
-    hitable *world = new hitable_list(list, 5);
-
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx)/float(ny), aperture, dist_to_focus);
-
-    cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
-
-    cv::Mat_<cv::Vec3b> _Image;
-    _Image = myImage;
-
-    for (int j = ny - 1; j >= 0; j--) {
-        for (int i = 0; i < nx; i++) {
-            vec3 col(0, 0, 0);
-            for (int s=0; s < ns; s++) {
-                float u = float(i + random_double()) / float(nx);
-                float v = float(j + random_double()) / float(ny);
-                rray r = cam.get_ray(u, v);
-                col += color(r, world, 0);
-
-            }
-
-            col /= float(ns);
-            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
-
-            int ir = int(255.99 * col[0]);
-            int ig = int(255.99 * col[1]);
-            int ib = int(255.99 * col[2]);
-
-            _Image(j, i)[0] = ib;
-            _Image(j, i)[1] = ig;
-            _Image(j, i)[2] = ir;
-        }
-    }
-    cv::imwrite("./_setup8.jpg", myImage);
-}
-*/
 
 hitable *random_scene() {
     int n = 500;
@@ -252,68 +88,13 @@ hitable *random_scene() {
     return new hitable_list(list,i);
 }
 
-void setup5() {
-
-    int nx = 1200/2;
-    int ny = 800/2;
-    int ns = 10;
-
-    float R = cos(M_PI/4);
-//    hitable *list[2];
-    hitable *world = random_scene();
-
-//        list[0] = new sphere(vec3(-R, 0, -1), R, new lambertian(vec3(0, 0, 1)));
-//    list[1] = new sphere(vec3(R, 0, -1), R, new lambertian(vec3(1, 0, 0)));
-//
-//    hitable *world = new hitable_list(list, 2);
-
-    vec3 lookfrom(-2, 2, 1);
-    vec3 lookat(0, 0, -1);
-    float dist_to_focus = 10.0;
-    float aperture = 0.1;
-
-/*
- *
-    hitable *list[5];
-
-    list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
-    list[1] = new sphere(vec3(0, -100.5, -1), 100, new lambertian(vec3(0.8, 0.8, 0.0)));
-    list[2] = new sphere(vec3(1, 0, -1), 0.5, new metal(vec3(0.8, 0.6, 0.2), 0));
-    list[3] = new sphere(vec3(-1, 0, -1), 0.5, new dielectric(1.5));
-    list[4] = new sphere(vec3(-1, 0, -1), 0.45, new dielectric(1.5));
-    hitable *world = new hitable_list(list, 5);
-*/
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), 50, float(nx)/float(ny), aperture, dist_to_focus);
-
-    cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
-
-    cv::Mat_<cv::Vec3b> _Image;
-    _Image = myImage;
-
-    for (int j = ny - 1; j >= 0; j--) {
-        for (int i = 0; i < nx; i++) {
-            vec3 col(0, 0, 0);
-            for (int s=0; s < ns; s++) {
-                float u = float(i + random_double()) / float(nx);
-                float v = float(j + random_double()) / float(ny);
-                rray r = cam.get_ray(u, v);
-                col += color(r, world, 0);
-
-            }
-
-            col /= float(ns);
-            col = vec3(sqrt(col[0]), sqrt(col[1]), sqrt(col[2]));
-
-            int ir = int(255.99 * col[0]);
-            int ig = int(255.99 * col[1]);
-            int ib = int(255.99 * col[2]);
-
-            _Image(j, i)[0] = ib;
-            _Image(j, i)[1] = ig;
-            _Image(j, i)[2] = ir;
-        }
-    }
-    cv::imwrite("./_setup13.jpg", myImage);
+hitable *two_spheres() {
+    texture *checker = new checker_texture(new constant_texture(vec3(0.2, 0.3, 0.1)), new constant_texture(vec3(0.9, 0.9, 0.9)));
+    int n = 50;
+    hitable **list = new hitable*[n+1];
+    list[0] = new sphere(vec3(0, -10, 0), 10, new lambertian( checker ));
+    list[1] = new sphere(vec3(0, 10, 0), 10, new lambertian( checker ));
+    return new hitable_list(list, 2);
 }
 
 void setup6() {
@@ -323,14 +104,15 @@ void setup6() {
     int ns = 10;
 
     float R = cos(M_PI/4);
-    hitable *world = random_scene();
+//    hitable *world = random_scene();
+    hitable *world = two_spheres();
 
-    vec3 lookfrom(-2, 2, 1);
-    vec3 lookat(0, 0, -1);
+    vec3 lookfrom(13, 2, 3);
+    vec3 lookat(0, 0, 0);
     float dist_to_focus = 10.0;
-    float aperture = 0.1;
+    float aperture = 0.0;
 
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), 80, float(nx)/float(ny), aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nx)/float(ny), aperture, dist_to_focus);
 
     cv::Mat myImage(ny, nx, CV_8UC3, cv::Scalar(.0, .0, .0));
 
@@ -359,11 +141,11 @@ void setup6() {
             _Image(j, i)[2] = ir;
         }
     }
-    cv::imwrite("./_setup14.jpg", myImage);
+    cv::imwrite("./_setup18.jpg", myImage);
 }
 
 int main() {
-    std::cout << "Raymondo 0.0.1" << std::endl;
+    std::cout << "Raymondo 0.0.2" << std::endl;
     setup6();
 
     return 0;
