@@ -87,7 +87,33 @@ void scaleCross() {
 
 }
 
+vec4 radarCircle() {
+    vec2 st = gl_FragCoord.xy/u_resolution.xy;
+    float pct = 0.0;
+//    float pct2 = 0.0;
+//    float pct3 = 0.0;
+
+    // The distance from the pixel to the centre.
+    pct = distance(st, vec2(0.5));
+
+    // The length of the vector from the pixel to the centre.
+    //vec2 toCentre = vec2(0.5)-st;
+    //pct2 = length(toCentre);
+
+    // The square root of the vector from the pixel to the centre.
+    //vec2 tC = vec2(sin(u_time), sin(u_time)) - st;
+    //pct3 = sqrt(tC.x*tC.x+tC.y*tC.y);
+
+    float innerF = sin(u_time);
+    float outerF = innerF + (0.1);
+
+    vec3 colour = vec3(1.0) - smoothstep(vec3(innerF, innerF, innerF), vec3(outerF, outerF, outerF), vec3(pct*2.0)) ;
+    //vec3 colour = vec3(pct3*2.0);
+
+    return vec4(colour, 1.0);
+}
+
 void main( )
 {
-    scaleCross();
+    radarCircle();
 }
