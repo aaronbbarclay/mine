@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/raymondo.dir/src/exrWriteTest.cpp.o"
-  "raymondo.pdb"
+  "CMakeFiles/raymondo.dir/src/main.cpp.o"
   "raymondo"
+  "raymondo.pdb"
 )
 
 # Per-language clean rules from dependency scanning.
