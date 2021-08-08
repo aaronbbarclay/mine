@@ -1,0 +1,3 @@
+/Users/aaronb/Dev/mine/theNextWeek/cmake-build/CMakeFiles/rebuild_cache.dir
+/Users/aaronb/Dev/mine/theNextWeek/cmake-build/CMakeFiles/edit_cache.dir
+/Users/aaronb/Dev/mine/theNextWeek/cmake-build/CMakeFiles/theNextWeek.dir
