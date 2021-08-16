@@ -6,5 +6,5 @@ CXX_FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/Ma
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/aaronb/Dev/raytracing.github.io/src/common -isystem /usr/local/include/opencv4 
+CXX_INCLUDES = -I/Users/aaronb/Dev/mine/theNextWeek/common -isystem /usr/local/include/opencv4 
 
