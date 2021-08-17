@@ -4,8 +4,18 @@ project (theNextWeek)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-include_directories(/usr/local/include/opencv4/)
-include_directories(/Users/aaronb/Dev/mine/theNextWeek/common/)
+if (LINUX)
+    MESSAGE("LINUX BUILD CONFIG")
+    set(OPENCV_BASE /usr/local/include/)
+    set(GIT_BASE /root/)
+else()
+    MESSAGE("APPLE BUILD CONFIG")
+    set(OPENCV_BASE /usr/include/)
+    set(GIT_BASE /Users/aaronb/Dev/)
+endif()
+
+include_directories(${OPENCV_BASE}/opencv4/)
+include_directories(${GIT_BASE}/mine/theNextWeek/common/)
 
 find_package(OpenCV REQUIRED)
 
