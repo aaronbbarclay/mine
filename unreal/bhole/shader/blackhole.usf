@@ -1,0 +1,65 @@
+#define STEPS 200
+
+struct BlackHoleProperties
+{
+    float Mass; // Mass of the black hole
+    float EventHorizon; // Black hole radius, Mass * 2
+
+};
+// Position is assumed to be at origin
+
+bool CrossedEventHorizon(float3 rayPosition, BlackHoleProperties BHP) 
+{
+    if (length(rayPosition) <= BHP.EventHorizon)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+float Cross2(float3 A, float3 B)
+{
+    return pow((A.y * B.z) - (B.y * A.z), 2.0) + pow((A.z * B.x) - (A.x * B.z), 2.0) + pow((A.x * B.y) - (A.y * B.x), 2.0);
+} 
+
+float3 GravityForce(float3 RayPos, float3 RayDir, BlackHoleProperties BHP)
+{
+    RayDir = normalize(RayDir);
+    float DistanceToSingularity = length(RayPos);
+    float SquaredDistance = DistanceToSingularity * DistanceToSingularity;
+    float3 SingularityToPosition = normalize(RayPos);
+
+    return (-3.0 * BHP.Mass) / SquaredDistance * Cross2(SingularityToPosition, RayDir) * SingularityToPosition;
+}
+
+void BlackHole(inout float4 Color, inout float Mask, inout float3 Dir, float3 CameraPosition, BlackHoleProperties BHP)
+{
+
+    float3 RayPosition = CameraPosition;
+    float3 RayDir = Dir;
+    float3 PreviousPosition;
+    // Begin Ray March
+
+    for (int i = 0; i < STEPS; i++) 
+    {
+        if(CrossedEventHorizon(RayPosition, BHP)) 
+        {
+            Mask = 0;
+            break;
+        }
+
+        PreviousPosition = RayPosition;
+        RayPosition += RayDir + GravityForce(RayPosition, RayDir, BHP);
+        RayDir = normalize(RayPosition - PreviousPosition);
+    }
+
+    Dir = RayDir;
+
+}
+
+float HelloWorld() 
+{
+    return 0.18;
+}
+
